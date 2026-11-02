@@ -1,0 +1,2 @@
+/home/linux/1/project_final/drv/dht11_drv/dht11_drv.ko
+/home/linux/1/project_final/drv/dht11_drv/dht11_drv.o

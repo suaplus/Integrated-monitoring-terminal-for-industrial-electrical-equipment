@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>工业用电设备监测终端 · 界面预览</title>
+<style>
+  :root{
+    --bg:#F2F4F7; --panel:#FFFFFF; --alt:#F7F9FC; --border:#E2E7EE; --header:#14304F;
+    --text:#1B2A41; --dim:#7A8798; --inv:#FFFFFF; --accent:#1668DC;
+    --ok:#18A058; --alarm:#D93636; --idle:#9AA5B1;
+    --motor:#2F6BFF; --pump:#0FA3A3; --navoff:#E9EDF2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#e9ecf1;font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",sans-serif;
+       color:var(--text);padding:24px;display:flex;flex-direction:column;align-items:center;gap:14px}
+  h1{font-size:18px;font-weight:600;color:#33465f}
+  .tabs{display:flex;gap:8px}
+  .tab{padding:8px 18px;border-radius:8px;background:#fff;border:1px solid var(--border);cursor:pointer;font-size:14px}
+  .tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .screen{width:800px;height:480px;position:relative;background:var(--bg);border-radius:12px;
+          overflow:hidden;box-shadow:0 8px 28px rgba(20,48,79,.18);display:none}
+  .screen.on{display:block}
+  .abs{position:absolute}
+
+  /* 顶栏 */
+  .hdr{left:0;top:0;width:800px;height:56px;background:var(--header)}
+  .hdr .title{left:16px;top:10px;font-size:32px;color:#fff;font-weight:600}
+  .hdr .time{left:348px;top:20px;font-size:16px;color:#B8C6D9}
+  .hdr .cl{left:556px;top:20px;font-size:16px;color:#B8C6D9}
+  .sw{left:630px;top:15px;width:52px;height:26px;border-radius:13px;background:#5A6B80;position:relative}
+  .sw i{position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+  .sw.on{background:var(--accent)} .sw.on i{left:29px}
+  .hdr .cst{left:692px;top:20px;font-size:16px}
+
+  /* 底栏 */
+  .nav{left:0;top:410px;width:800px;height:70px;background:#fff;border-top:1px solid var(--border);
+       display:flex;align-items:center;justify-content:center;gap:12px}
+  .navbtn{width:170px;height:54px;border-radius:10px;background:var(--navoff);color:var(--text);
+          display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer}
+  .navbtn.on{background:var(--accent);color:#fff}
+
+  /* 卡片 / 数值格 */
+  .card{background:#fff;border:1px solid var(--border);border-radius:10px}
+  .cell{background:var(--alt);border-radius:8px;position:absolute}
+  .cell .t{position:absolute;left:12px;top:8px;font-size:16px;color:var(--dim)}
+  .cell .v{position:absolute;left:12px;top:30px;font-size:24px;font-weight:600}
+  .dot{position:absolute;width:10px;height:10px;border-radius:5px;background:var(--ok)}
+  .pill{position:absolute;border-radius:15px;color:#fff;font-size:16px;
+        display:flex;align-items:center;justify-content:center}
+  .tag{font-size:16px;color:var(--dim)}
+  .btn{border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+  /* 摄像头 */
+  .vid{background:#0B1220;border:1px solid #2A3A55;border-radius:10px;overflow:hidden}
+  .corner{position:absolute;width:26px;height:26px}
+  .c-tl{left:12px;top:12px;border-left:3px solid #35E0A1;border-top:3px solid #35E0A1}
+  .c-tr{right:12px;top:12px;border-right:3px solid #35E0A1;border-top:3px solid #35E0A1}
+  .c-bl{left:12px;bottom:12px;border-left:3px solid #35E0A1;border-bottom:3px solid #35E0A1}
+  .c-br{right:12px;bottom:12px;border-right:3px solid #35E0A1;border-bottom:3px solid #35E0A1}
+  .rec{position:absolute;width:12px;height:12px;border-radius:6px;background:var(--alarm);animation:blink 1.4s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.16}}
+  .mach{position:absolute;background:#22334D;border-radius:6px}
+  .work{position:absolute;width:74px;height:46px;border-radius:6px;background:#3E6FD6;animation:move 9s ease-in-out infinite}
+  @keyframes move{0%{left:40px}50%{left:406px}100%{left:40px}}
+
+  /* 图表 */
+  svg{display:block}
+</style>
+</head>
+<body>
+<h1>工业用电设备监测终端 · 800×480 界面预览</h1>
+<div class="tabs">
+  <div class="tab on" data-s="0">1 主界面</div>
+  <div class="tab" data-s="1">2 摄像头</div>
+  <div class="tab" data-s="2">3 历史数据</div>
+  <div class="tab" data-s="3">4 阈值设置</div>
+</div>
+
+<!-- ==================== 1 主界面 ==================== -->
+<div class="screen on" id="s0">
+  <div class="abs hdr">
+    <div class="abs title">工业用电设备监测终端</div>
+    <div class="abs time">10-25 14:24</div>
+    <div class="abs cl">数据上传</div>
+    <div class="abs sw" id="cloudSw"><i></i></div>
+    <div class="abs cst" id="cloudTxt" style="color:#B8C6D9">已关闭</div>
+  </div>
+
+  <!-- 电机卡 -->
+  <div class="abs card" style="left:12px;top:68px;width:382px;height:188px">
+    <div class="abs" style="left:0;top:0;width:6px;height:188px;border-radius:3px;background:var(--motor)"></div>
+    <div class="abs" style="left:18px;top:12px;font-size:24px;font-weight:600">电机</div>
+    <div class="abs tag" style="left:76px;top:17px">MOTOR-01</div>
+    <div class="abs pill" style="left:270px;top:12px;width:100px;height:30px;background:var(--ok)">正常运行</div>
+    <div class="cell" style="left:12px;top:50px;width:175px;height:62px">
+      <span class="t">电压</span><span class="v">380.4 V</span><span class="dot" style="right:12px;top:10px"></span></div>
+    <div class="cell" style="left:199px;top:50px;width:175px;height:62px">
+      <span class="t">电流</span><span class="v">12.3 A</span><span class="dot" style="right:12px;top:10px"></span></div>
+    <div class="cell" style="left:12px;top:120px;width:175px;height:62px">
+      <span class="t">功率</span><span class="v">4021 W</span><span class="dot" style="right:12px;top:10px"></span></div>
+    <div class="cell" style="left:199px;top:120px;width:175px;height:62px">
+      <span class="t">振动强度</span><span class="v" >2.6 mm/s</span><span class="dot" style="right:12px;top:10px"></span></div>
+  </div>
+
+  <!-- 水泵卡 -->
+  <div class="abs card" style="left:406px;top:68px;width:382px;height:188px">
+    <div class="abs" style="left:0;top:0;width:6px;height:188px;border-radius:3px;background:var(--pump)"></div>
+    <div class="abs" style="left:18px;top:12px;font-size:24px;font-weight:600">水泵</div>
+    <div class="abs tag" style="left:76px;top:17px">PUMP-01</div>
+    <div class="abs pill" style="left:270px;top:12px;width:100px;height:30px;background:var(--ok)">正常运行</div>
+    <div class="cell" style="left:12px;top:50px;width:175px;height:62px">
+      <span class="t">电压</span><span class="v">379.1 V</span><span class="dot" style="right:12px;top:10px"></span></div>
+    <div class="cell" style="left:199px;top:50px;width:175px;height:62px">
+      <span class="t">电流</span><span class="v">8.2 A</span><span class="dot" style="right:12px;top:10px"></span></div>
+    <div class="cell" style="left:12px;top:120px;width:175px;height:62px">
+      <span class="t">功率</span><span class="v">2556 W</span><span class="dot" style="right:12px;top:10px"></span></div>
+    <div class="cell" style="left:199px;top:120px;width:175px;height:62px">
+      <span class="t">振动强度</span><span class="v">1.8 mm/s</span><span class="dot" style="right:12px;top:10px"></span></div>
+  </div>
+
+  <!-- 环境参数 -->
+  <div class="abs card" style="left:12px;top:268px;width:776px;height:142px">
+    <div class="abs" style="left:16px;top:12px;font-size:24px;font-weight:600">环境参数</div>
+    <div class="abs" style="left:620px;top:18px;width:140px;text-align:right;font-size:16px;color:var(--ok)">全部正常</div>
+    <div class="cell" style="left:16px;top:46px;width:240px;height:80px">
+      <span class="t">温度</span><span class="v">32.5 ℃</span><span class="dot" style="right:12px;top:10px"></span></div>
+    <div class="cell" style="left:268px;top:46px;width:240px;height:80px">
+      <span class="t">湿度</span><span class="v">55.0 %</span><span class="dot" style="right:12px;top:10px"></span></div>
+    <div class="cell" style="left:520px;top:46px;width:240px;height:80px">
+      <span class="t">烟雾浓度</span><span class="v">96 ppm</span><span class="dot" style="right:12px;top:10px"></span></div>
+  </div>
+
+  <div class="abs nav">
+    <div class="navbtn on" data-go="0">主界面</div>
+    <div class="navbtn" data-go="1">摄像头</div>
+    <div class="navbtn" data-go="2">历史数据</div>
+    <div class="navbtn" data-go="3">阈值设置</div>
+  </div>
+</div>
+
+<!-- ==================== 2 摄像头 ==================== -->
+<div class="screen" id="s1">
+  <div class="abs hdr">
+    <div class="abs title">工业用电设备监测终端</div>
+    <div class="abs time">10-25 14:24</div>
+    <div class="abs cl">数据上传</div>
+    <div class="abs sw"><i></i></div>
+    <div class="abs cst" style="color:#B8C6D9">已关闭</div>
+  </div>
+
+  <div class="abs vid" style="left:12px;top:68px;width:536px;height:342px">
+    <div class="abs mach" style="left:60px;top:120px;width:130px;height:138px"></div>
+    <div class="abs mach" style="left:210px;top:150px;width:240px;height:16px"></div>
+    <div class="abs" style="left:20px;top:258px;width:496px;height:4px;background:#1E2C44"></div>
+    <div class="work"></div>
+    <div class="corner c-tl"></div><div class="corner c-tr"></div>
+    <div class="corner c-bl"></div><div class="corner c-br"></div>
+    <div class="abs" style="left:18px;top:14px;font-size:16px;color:#DCE6F2">CAM-01 · 电机区</div>
+    <div class="abs" style="right:18px;top:14px;font-size:16px;color:#8FA3BC">1920×1080 · 25 FPS</div>
+    <div class="rec" style="left:18px;bottom:22px"></div>
+    <div class="abs" style="left:36px;bottom:20px;font-size:16px;color:#DCE6F2">REC</div>
+    <div class="abs" style="right:18px;bottom:20px;font-size:16px;color:#DCE6F2">2026-10-25 14:24:03</div>
+  </div>
+
+  <div class="abs card" style="left:560px;top:68px;width:228px;height:342px">
+    <div class="abs" style="left:14px;top:12px;font-size:24px;font-weight:600">摄像头信息</div>
+    <div class="abs" style="left:14px;top:52px;font-size:16px;color:var(--dim)">分辨率</div>
+    <div class="abs" style="right:14px;top:52px;font-size:16px">1920×1080</div>
+    <div class="abs" style="left:14px;top:80px;font-size:16px;color:var(--dim)">帧率</div>
+    <div class="abs" style="right:14px;top:80px;font-size:16px">25 FPS</div>
+    <div class="abs" style="left:14px;top:108px;font-size:16px;color:var(--dim)">码率</div>
+    <div class="abs" style="right:14px;top:108px;font-size:16px">4.2 Mbps</div>
+    <div class="abs" style="left:14px;top:136px;font-size:16px;color:var(--dim)">状态</div>
+    <div class="abs" style="right:14px;top:136px;font-size:16px;color:var(--ok)">在线</div>
+    <div class="abs btn" style="left:14px;top:170px;width:200px;height:44px;background:var(--navoff);font-size:24px">录像</div>
+    <div class="abs btn" style="left:14px;top:222px;width:200px;height:44px;background:var(--navoff);font-size:24px">拍照</div>
+    <div class="abs btn" style="left:14px;top:274px;width:200px;height:44px;background:var(--navoff);font-size:24px">切换摄像头</div>
+  </div>
+
+  <div class="abs nav">
+    <div class="navbtn" data-go="0">主界面</div>
+    <div class="navbtn on" data-go="1">摄像头</div>
+    <div class="navbtn" data-go="2">历史数据</div>
+    <div class="navbtn" data-go="3">阈值设置</div>
+  </div>
+</div>
+
+<!-- ==================== 3 历史数据 ==================== -->
+<div class="screen" id="s2">
+  <div class="abs hdr">
+    <div class="abs title">工业用电设备监测终端</div>
+    <div class="abs time">10-25 14:24</div>
+    <div class="abs cl">数据上传</div>
+    <div class="abs sw"><i></i></div>
+    <div class="abs cst" style="color:#B8C6D9">已关闭</div>
+  </div>
+
+  <div class="abs card" style="left:12px;top:68px;width:536px;height:250px">
+    <svg class="abs" style="left:20px;top:40px" width="496" height="194" viewBox="0 0 496 194">
+      <g stroke="#EEF1F5" stroke-width="1">
+        <line x1="40" y1="0" x2="496" y2="0"/><line x1="40" y1="39" x2="496" y2="39"/>
+        <line x1="40" y1="78" x2="496" y2="78"/><line x1="40" y1="117" x2="496" y2="117"/>
+        <line x1="40" y1="156" x2="496" y2="156"/><line x1="40" y1="193" x2="496" y2="193"/>
+      </g>
+      <g font-size="13" fill="#7A8798" text-anchor="end">
+        <text x="34" y="4">100</text><text x="34" y="43">80</text><text x="34" y="82">60</text>
+        <text x="34" y="121">40</text><text x="34" y="160">20</text><text x="34" y="197">0</text>
+      </g>
+      <polyline fill="none" stroke="#E53935" stroke-width="2"
+        points="40,150 49,148 58,151 67,146 76,149 85,144 94,147 103,142 112,145 121,141 130,144 139,140 148,143 157,139 166,142 175,138 184,141 193,137 202,140 211,136 220,139 229,135 238,138 247,134 256,137 265,133 274,136 283,145 292,150 301,146 310,140 319,143 328,139 337,142 346,138 355,141 364,137 373,140 382,136 391,139 400,135 409,138 418,134 427,137 436,133 445,136 454,132 463,135 472,131 481,134 490,130"/>
+      <polyline fill="none" stroke="#1E88E5" stroke-width="2"
+        points="40,90 49,95 58,88 67,92 76,86 85,90 94,84 103,88 112,82 121,86 130,80 139,84 148,78 157,82 166,76 175,80 184,74 193,78 202,72 211,76 220,70 229,74 238,68 247,72 256,66 265,70 274,64 283,68 292,72 301,66 310,70 319,64 328,68 337,62 346,66 355,60 364,64 373,58 382,62 391,56 400,60 409,54 418,58 427,52 436,56 445,50 454,54 463,48 472,52 481,46 490,50"/>
+      <polyline fill="none" stroke="#43A047" stroke-width="2"
+        points="40,180 49,178 58,181 67,176 76,179 85,174 94,177 103,172 112,175 121,171 130,174 139,170 148,173 157,169 166,172 175,168 184,171 193,167 202,170 211,166 220,169 229,165 238,168 247,164 256,167 265,163 274,166 283,120 292,60 301,55 310,150 319,175 328,178 337,176 346,179 355,175 364,178 373,174 382,177 391,173 400,176 409,172 418,175 427,171 436,174 445,170 454,173 463,169 472,172 481,168 490,171"/>
+      <polyline fill="none" stroke="#FB8C00" stroke-width="2"
+        points="40,42 49,44 58,41 67,43 76,40 85,42 94,39 103,41 112,38 121,40 130,37 139,39 148,36 157,38 166,35 175,37 184,34 193,36 202,33 211,35 220,32 229,34 238,31 247,33 256,30 265,32 274,29 283,31 292,34 301,80 310,85 319,82 328,40 337,42 346,39 355,41 364,38 373,40 382,37 391,39 400,36 409,38 418,35 427,37 436,34 445,36 454,33 463,35 472,32 481,34 490,31"/>
+      <polyline fill="none" stroke="#8E24AA" stroke-width="2"
+        points="40,140 49,136 58,142 67,138 76,144 85,140 94,146 103,142 112,148 121,144 130,150 139,146 148,152 157,148 166,154 175,150 184,156 193,152 202,158 211,154 220,160 229,156 238,162 247,158 256,164 265,160 274,166 283,60 292,55 301,58 310,145 319,150 328,144 337,148 346,142 355,146 364,140 373,144 382,138 391,142 400,136 409,140 418,134 427,138 436,132 445,136 454,130 463,134 472,128 481,132 490,126"/>
+      <polyline fill="none" stroke="#00897B" stroke-width="2"
+        points="40,120 49,116 58,118 67,114 76,116 85,112 94,114 103,110 112,112 121,108 130,110 139,106 148,108 157,104 166,106 175,102 184,104 193,100 202,102 211,98 220,100 229,96 238,98 247,94 256,96 265,92 274,94 283,96 292,100 301,94 310,118 319,122 328,116 337,118 346,114 355,116 364,112 373,114 382,110 391,112 400,108 409,110 418,106 427,108 436,104 445,106 454,102 463,104 472,100 481,102 490,98"/>
+      <polyline fill="none" stroke="#D81B60" stroke-width="2"
+        points="40,175 49,173 58,176 67,171 76,174 85,170 94,173 103,169 112,172 121,168 130,171 139,167 148,170 157,166 166,169 175,165 184,168 193,164 202,167 211,163 220,166 229,162 238,165 247,161 256,164 265,160 274,163 283,50 292,44 301,48 310,158 319,172 328,170 337,173 346,169 355,172 364,168 373,171 382,167 391,170 400,166 409,169 418,165 427,168 436,164 445,167 454,163 463,166 472,162 481,165 490,161"/>
+    </svg>
+  </div>
+
+  <div class="abs" id="legend" style="left:12px;top:326px;display:flex;gap:6px"></div>
+  <div class="abs" style="left:12px;top:380px;font-size:16px;color:var(--dim)">纵轴为各参数占量程百分比 · 最近 50 点</div>
+  <div class="abs btn" style="left:384px;top:374px;width:128px;height:34px;background:var(--navoff);font-size:16px">清空</div>
+
+  <div class="abs card" style="left:560px;top:68px;width:228px;height:342px">
+    <div class="abs" style="left:14px;top:12px;font-size:16px;color:var(--dim)">数据源</div>
+    <div class="abs btn" style="left:14px;top:34px;width:95px;height:40px;background:var(--motor);color:#fff;font-size:16px">电机</div>
+    <div class="abs btn" style="left:119px;top:34px;width:95px;height:40px;background:var(--navoff);font-size:16px">水泵</div>
+    <div class="abs" style="left:14px;top:88px;font-size:24px;font-weight:600">实时值</div>
+    <div id="live" class="abs" style="left:0;top:122px;width:228px"></div>
+  </div>
+
+  <div class="abs nav">
+    <div class="navbtn" data-go="0">主界面</div>
+    <div class="navbtn" data-go="1">摄像头</div>
+    <div class="navbtn on" data-go="2">历史数据</div>
+    <div class="navbtn" data-go="3">阈值设置</div>
+  </div>
+</div>
+
+<!-- ==================== 4 阈值设置 ==================== -->
+<div class="screen" id="s3">
+  <div class="abs hdr">
+    <div class="abs title">工业用电设备监测终端</div>
+    <div class="abs time">10-25 14:24</div>
+    <div class="abs cl">数据上传</div>
+    <div class="abs sw"><i></i></div>
+    <div class="abs cst" style="color:#B8C6D9">已关闭</div>
+  </div>
+
+  <div id="thrGrid"></div>
+
+  <div class="abs btn" style="left:240px;top:360px;width:150px;height:44px;background:var(--navoff);font-size:24px">恢复默认</div>
+  <div class="abs btn" style="left:410px;top:360px;width:150px;height:44px;background:var(--accent);color:#fff;font-size:24px">保存</div>
+  <div class="abs" style="left:578px;top:372px;font-size:16px;color:var(--dim)">修改后点保存生效</div>
+
+  <div class="abs nav">
+    <div class="navbtn" data-go="0">主界面</div>
+    <div class="navbtn" data-go="1">摄像头</div>
+    <div class="navbtn" data-go="2">历史数据</div>
+    <div class="navbtn on" data-go="3">阈值设置</div>
+  </div>
+</div>
+
+<script>
+  const CH = [["温度","#E53935"],["湿度","#1E88E5"],["烟雾","#43A047"],
+              ["电压","#FB8C00"],["电流","#8E24AA"],["功率","#00897B"],["振动","#D81B60"]];
+  const LV = ["32.5 ℃","55.0 %","96 ppm","380.4 V","12.3 A","4021 W","2.6 mm/s"];
+
+  document.getElementById('legend').innerHTML = CH.map(c =>
+    `<div class="btn" style="width:68px;height:42px;background:${c[1]};color:#fff;font-size:16px">${c[0]}</div>`).join('');
+
+  document.getElementById('live').innerHTML = CH.map((c,i) =>
+    `<div style="display:flex;justify-content:space-between;padding:0 14px 16px 14px;font-size:16px">
+       <span style="color:#7A8798">${c[0]}</span><span style="color:${c[1]}">${LV[i]}</span></div>`).join('');
+
+  const THR = [["电压上限","V",400,500],["电压下限","V",320,500],["电流上限","A",20,50],["功率上限","W",2200,3000],
+               ["温度上限","℃",65,120],["湿度上限","%",80,100],["烟雾上限","ppm",300,1000],["振动上限","mm/s",8,50]];
+  document.getElementById('thrGrid').innerHTML = THR.map((t,i) => {
+    const x = (i%2) ? 404 : 12, y = 68 + Math.floor(i/2)*72;
+    const pct = Math.round(t[2]/t[3]*100);
+    return `<div class="abs card" style="left:${x}px;top:${y}px;width:384px;height:64px">
+      <span style="position:absolute;left:12px;top:8px;font-size:16px">${t[0]}</span>
+      <span style="position:absolute;left:208px;top:4px;width:160px;text-align:right;font-size:24px;font-weight:600">${t[2]} ${t[1]}</span>
+      <div style="position:absolute;left:12px;top:34px;width:360px;height:18px;border-radius:9px;background:#DCE2EA">
+        <div style="width:${pct}%;height:18px;border-radius:9px;background:#1668DC"></div>
+        <div style="position:absolute;left:calc(${pct}% - 11px);top:-2px;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid #1668DC"></div>
+      </div></div>`;
+  }).join('');
+
+  function show(i){
+    document.querySelectorAll('.screen').forEach((s,k)=>s.classList.toggle('on', k===i));
+    document.querySelectorAll('.tab').forEach((t,k)=>t.classList.toggle('on', k===i));
+  }
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(+t.dataset.s));
+  document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>show(+b.dataset.go));
+
+  const sw = document.getElementById('cloudSw'), tx = document.getElementById('cloudTxt');
+  sw.onclick = () => {
+    const on = sw.classList.toggle('on');
+    tx.textContent = on ? '已开启' : '已关闭';
+    tx.style.color = on ? '#18A058' : '#B8C6D9';
+  };
+</script>
+</body>
+</html>

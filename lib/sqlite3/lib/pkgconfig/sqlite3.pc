@@ -1,0 +1,13 @@
+# Package Information for pkg-config
+
+prefix=/home/linux/sqlite3/sqlite-3.7.3/instal
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: SQLite
+Description: SQL database engine
+Version: 3.7.3
+Libs: -L${libdir} -lsqlite3
+Libs.private: -ldl -lpthread 
+Cflags: -I${includedir}
